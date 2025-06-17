@@ -1,24 +1,49 @@
 {
   "name": "gitbuddy",
   "displayName": "GitBuddy",
-  "description": "",
+  "description": "Visual Git integration for VS Code with side-by-side diffs and commit management",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.101.0"
   },
   "categories": [
+    "SCM",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:gitbuddy.sidebarView",
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gitbuddy",
+          "title": "GitBuddy",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "gitbuddy": [
+        {
+          "id": "gitbuddy.sidebarView",
+          "name": "Changes"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "gitbuddy.helloWorld",
-        "title": "Hello World"
+        "command": "gitbuddy.refresh",
+        "title": "Refresh Git Changes",
+        "category": "GitBuddy"
       }
     ]
   },
+  "extensionDependencies": [
+    "vscode.git"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -28,14 +53,13 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.101.0",
-    "@types/mocha": "^10.0.10",
+    "@types/vscode": "^1.85.0",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
     "eslint": "^9.25.1",
     "typescript": "^5.8.3",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.19.2"
   }
 }
