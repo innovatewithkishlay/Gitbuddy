@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { parseDiff } from "./diffParser";
+import type { SourceControlResourceState } from "vscode";
 
 export class PanelProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -49,6 +50,7 @@ export class PanelProvider implements vscode.WebviewViewProvider {
 
     const api = gitExtension.getAPI(1);
     const repo = api.repositories[0];
+
     return repo.state.workingTreeChanges.map((change) => ({
       path: change.uri.fsPath,
       status: change.status,
