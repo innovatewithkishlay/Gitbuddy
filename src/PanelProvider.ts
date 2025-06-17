@@ -47,15 +47,11 @@ export class PanelProvider implements vscode.WebviewViewProvider {
 
   private async getChangedFiles() {
     const gitExtension =
-      vscode.extensions.getExtension<vscode.GitExtension>(
-        "vscode.git"
-      )?.exports;
+      vscode.extensions.getExtension<GitExtension>("vscode.git")?.exports;
     if (!gitExtension) return [];
-
-    const api = gitExtension.getAPI(1);
+    const api: API = gitExtension.getAPI(1);
     const repo = api.repositories[0];
-
-    return repo.state.workingTreeChanges.map((change) => ({
+    return repo.state.workingTreeChanges.map((change: Change) => ({
       path: change.uri.fsPath,
       status: change.status,
     }));
