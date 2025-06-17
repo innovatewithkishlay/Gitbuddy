@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { parseDiff } from "./diffParser";
 import type { SourceControlResourceState } from "vscode";
+import { GitExtension, API, Change } from "./git";
 
 export class PanelProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -45,7 +46,10 @@ export class PanelProvider implements vscode.WebviewViewProvider {
   }
 
   private async getChangedFiles() {
-    const gitExtension = vscode.extensions.getExtension("vscode.git")?.exports;
+    const gitExtension =
+      vscode.extensions.getExtension<vscode.GitExtension>(
+        "vscode.git"
+      )?.exports;
     if (!gitExtension) return [];
 
     const api = gitExtension.getAPI(1);
