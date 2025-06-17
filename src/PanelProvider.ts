@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { parseDiff } from "./diffParser";
-import type { SourceControlResourceState } from "vscode";
-import { GitExtension, API, Change } from "./git";
+
+interface GitExtension {
+  getAPI(version: 1): any;
+}
 
 export class PanelProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -46,12 +48,15 @@ export class PanelProvider implements vscode.WebviewViewProvider {
   }
 
   private async getChangedFiles() {
-    const gitExtension =
-      vscode.extensions.getExtension<GitExtension>("vscode.git")?.exports;
+    const gitExtension = vscode.extensions.getExtension("vscode.git")
+      ?.exports as GitExtension | undefined;
     if (!gitExtension) return [];
-    const api: API = gitExtension.getAPI(1);
+
+    const api = gitExtension.getAPI(1);
     const repo = api.repositories[0];
-    return repo.state.workingTreeChanges.map((change: Change) => ({
+    if (!repo) return [];
+
+    return repo.state.workingTreeChanges.map((change: any) => ({
       path: change.uri.fsPath,
       status: change.status,
     }));
@@ -76,7 +81,7 @@ export class PanelProvider implements vscode.WebviewViewProvider {
 
     return new Promise<string>((resolve, reject) => {
       exec(
-        `git diff ${filePath}`,
+        `git diff "${filePath}"`,
         { cwd: workspaceFolder },
         (err: any, stdout: string) => {
           err ? reject(err) : resolve(stdout);
@@ -91,7 +96,7 @@ export class PanelProvider implements vscode.WebviewViewProvider {
 
     await new Promise<void>((resolve, reject) => {
       exec(
-        `git add . && git commit -m "${message}"`,
+        `git add . && git commit -m "${message.replace(/"/g, '\\"')}"`,
         { cwd: workspaceFolder },
         (err: any) => (err ? reject(err) : resolve())
       );
