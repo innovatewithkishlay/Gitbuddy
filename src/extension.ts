@@ -6,16 +6,14 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      "gitChangeVisualizer.sidebarView",
+      "gitbuddy.sidebarView",
       provider,
-      {
-        webviewOptions: { retainContextWhenHidden: true },
-      }
+      { webviewOptions: { retainContextWhenHidden: true } }
     )
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("gitChangeVisualizer.refresh", () => {
+    vscode.commands.registerCommand("gitbuddy.refresh", () => {
       provider.refresh();
     })
   );
