@@ -9,9 +9,9 @@ export function parseDiff(rawDiff: string): DiffBlock[] {
   let currentBlock: DiffBlock = { added: [], removed: [] };
 
   lines.forEach((line) => {
-    if (line.startsWith("+")) {
+    if (line.startsWith("+") && !line.startsWith("+++")) {
       currentBlock.added.push(line.substring(1));
-    } else if (line.startsWith("-")) {
+    } else if (line.startsWith("-") && !line.startsWith("---")) {
       currentBlock.removed.push(line.substring(1));
     } else {
       if (currentBlock.added.length > 0 || currentBlock.removed.length > 0) {
@@ -20,6 +20,10 @@ export function parseDiff(rawDiff: string): DiffBlock[] {
       }
     }
   });
+
+  if (currentBlock.added.length > 0 || currentBlock.removed.length > 0) {
+    blocks.push(currentBlock);
+  }
 
   return blocks;
 }
